@@ -1,32 +1,20 @@
-pipeline{
+pipeline {
     agent any
-    tools {
-           dockerTool 'docker'            
-    }
-    stages { 
+    stages {
         stage('Deploy the App') {
             steps {
                 echo 'Deploy the App'
-                // sh 'ls -l'
-                // sh 'docker --version'
-                script {
-                    dockerComposeBuild(
-                        composeFile: 'docker-compose.yaml')
-                }        
-             }
+                sh 'ls -l'
+                sh 'docker --version'
+                sh 'docker-compose build' // Docker Compose ile projeyi oluştur
+            }
         }
-
-    
-
-        stage('Destroy the infrastructure'){
-            steps{
-                timeout(time:5, unit:'DAYS'){
+        stage('Destroy the infrastructure') {
+            steps {
+                timeout(time:5, unit:'DAYS') {
                     input message:'Approve terminate'
                 }
-                script {
-                    dockerComposeDown(
-                        composeFile: 'docker-compose.yaml')
-                } 
+                sh 'docker-compose down' // Docker Compose ile altyapıyı kaldır
             }
         }
     }
@@ -35,8 +23,8 @@ pipeline{
         success {
         script {
         slackSend channel: '#class-chat', color: '#439FE0', message: ':unicorn_face:', teamDomain: 'devops15tr', tokenCredentialId: 'jenkins-slack'
-            }
-    }
+        }
+       }
     }  
 
 }
