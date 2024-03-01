@@ -6,7 +6,7 @@ pipeline {
                 echo 'Deploy the App'
                 sh 'ls -l'
                 sh 'docker --version'
-                sh 'docker-compose up build' 
+                sh 'docker-compose build' 
             }
         }
         stage('Destroy the infrastructure') {
