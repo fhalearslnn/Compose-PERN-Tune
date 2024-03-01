@@ -1,9 +1,8 @@
 pipeline{
     agent any
     tools {
-           dockerTool 'docker'            
+           docker 'docker'            
     }
-
     stages { 
         stage('Deploy the App') {
             steps {
