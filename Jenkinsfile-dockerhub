@@ -49,7 +49,6 @@ pipeline{
         }
         stage('Wait the container'){
             step {
-                # Wait until the container is up and running.  
                 script {
                     echo 'Waiting for the container '
                     sh ' sleep 60s'
