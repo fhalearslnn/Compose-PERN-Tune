@@ -40,7 +40,7 @@ pipeline{
         stage('Create Network') {
             steps {
                 echo 'echo Creating the network for the App'
-                sh 'docker network create "$NETWORK'
+                sh 'docker network create "$NETWORK"'
             }
         }
         stage('Deploy the DB'){
