@@ -3,28 +3,27 @@ pipeline{
 
     environment {
             DOCKERHUB_USER="fhalearslan"
-            APP_REPO_NAME = "haley-todo-app"  
+            APP_REPO_NAME = "haley-todo"  
             NETWORK="haleynetwork"
             VOLUME="haleyvolume"
-            POSTGRES_PASSWORD="Pp123456789"
+
     }
     stages{
         stage("Build Docker Images"){
-            steps{
-                withCredentials([string(credentialsId: 'dockerhub', variable: 'DOCKER_TOKEN')]) {
-                    echo 'Building Docker images'
-                    sh 'docker build --force-rm -t "$DOCKERHUB_USER/$APP_REPO_NAME:postgre" -f ./database/Dockerfile .'
-                    sh 'docker build --force-rm -t "$DOCKERHUB_USER/$APP_REPO_NAME:nodejs" -f ./server/Dockerfile .'
-                    sh 'docker build --force-rm -t "$DOCKERHUB_USER/$APP_REPO_NAME:react" -f ./client/Dockerfile .'
-                    sh 'docker image ls'
-                }
+            steps {
+                echo 'Building App Image'                
+                sh 'docker build --force-rm -t "$DOCKERHUB_USER/$APP_REPO_NAME:postgre" -f ./database/Dockerfile .'
+                sh 'docker build --force-rm -t "$DOCKERHUB_USER/$APP_REPO_NAME:nodejs" -f ./server/Dockerfile .'
+                sh 'docker build --force-rm -t "$DOCKERHUB_USER/$APP_REPO_NAME:react" -f ./client/Dockerfile .'
+                sh 'docker image ls'
             }
         }
+        
         stage('Push Image to Dockerhub Repo') {
             steps {
                 withCredentials([string(credentialsId: 'dockerhub', variable: 'DOCKER_TOKEN')]){
                     echo 'Pushing App Image to Dockerhub Repo'
-                    sh 'docker login -u "$DOCKERHUB_USER" -p dckr_pat_pjBe0LfjreBlXAdsQmACJseY_T8'
+                    sh 'docker login -u fhalearslan -p $DOCKER_TOKEN'
                     sh 'docker push "$DOCKERHUB_USER/$APP_REPO_NAME:postgre"'
                     sh 'docker push "$DOCKERHUB_USER/$APP_REPO_NAME:nodejs"'
                     sh 'docker push "$DOCKERHUB_USER/$APP_REPO_NAME:react"'
@@ -35,7 +34,7 @@ pipeline{
         stage('Create Volume') {
             steps {
                 echo 'echo Creating the volume for the App'
-                sh 'docker volume create "$VOLUME'
+                sh 'docker volume create "$VOLUME"'
             }
         }
         stage('Create Network') {
